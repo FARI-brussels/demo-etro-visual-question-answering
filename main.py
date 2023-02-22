@@ -7,6 +7,8 @@ import streamlit as st
 import base64
 
 api_token = "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"
+global current_pic_path
+current_pic_path=""
 
 # flet run main.py -d
 
@@ -22,77 +24,84 @@ def main(page: ft.Page):
 
     def how(e):
         page.go("/how")
+        
+    def ask(e):
+        question_print.value = question.value
+        question.value = ""
+        question.focus()
+        question.update()
+        page.update()
+        page.go("/result")
     
-    def clickOnImage(e, url):
-        print(url)
-        #page.go("/ask")
+    def clickOnImage(e):
+        global current_pic_path
+        current_pic_path = e
+        page.go("/ask")
+    
+    def items():
+        items = []
+        for i in range(0, 10):
+            btn = ft.ElevatedButton(
+                    content= 
+                        ft.Image(
+                            src=f"https://picsum.photos/400/400?{i}",
+                            fit=ft.ImageFit.COVER,
+                            width=500,
+                            height=500,
+                            border_radius=ft.border_radius.all(20),
+                        ),
+                    style=
+                        ft.ButtonStyle(
+                            color={
+                                ft.MaterialState.HOVERED: ft.colors.WHITE,
+                                ft.MaterialState.FOCUSED: ft.colors.BLUE,
+                                ft.MaterialState.DEFAULT: ft.colors.BLACK,
+                            },
+                            bgcolor={ft.MaterialState.FOCUSED: ft.colors.WHITE, ft.MaterialState.DEFAULT: ft.colors.WHITE},
+                            padding={ft.MaterialState.DEFAULT: 0, ft.MaterialState.HOVERED: 20},
+                            overlay_color=ft.colors.TRANSPARENT,
+                            elevation={"pressed": 0, "": 1},
+                            animation_duration=500,
+                            shape={
+                                ft.MaterialState.HOVERED: RoundedRectangleBorder(radius=20),
+                                ft.MaterialState.DEFAULT: RoundedRectangleBorder(radius=20),
+                            },
+                        ),
+                    data = f"https://picsum.photos/400/400?"+str(i),
+                    on_click=lambda e: clickOnImage(e.control.data),
+            )
+            items.append(btn)
+        return items
+    
     
     page.title = "FARI - Visual question answering"
-    
     page.fonts = {
         "Plain": "/fonts/Plain-Regular.otf",
         "Rhetorik": "/fonts/RhetorikSerifTrial-Regular.ttf"
     }
 
     
-    #page.vertical_alignment = ft.MainAxisAlignment.CENTER
-    
+
     file_picker = ft.FilePicker()
-    #page.overlay.append(file_picker)
-    #question = ft.TextField(hint_text="Ask question about the image?")
-    #quest_label = ft.Text(value="test", color="#8f8f8f", size=20, font_family="Plain")
+    
+    question = ft.TextField(width=500, hint_text="Ask question about the image?")
+    question_print = ft.TextField(width=500, hint_text="??", disabled=True)
+    AI_resp_print = ft.TextField(width=500, hint_text="Yes", disabled=True)
+    AI_expl_print = ft.TextField(width=500, hint_text="Because", disabled=True)
+    
     
     images = ft.GridView(
         expand=1,
         runs_count=3,
         max_extent=400,
         child_aspect_ratio=1.0,
-        spacing=20,
-        run_spacing=20,
+        spacing=40,
+        run_spacing=40,
+        controls=items(),
     )
-    
-    for i in range(0, 10):
-        images.controls.append(
-            ft.ElevatedButton(
-                content= 
-                    ft.Image(
-                        src=f"https://picsum.photos/400/400?{i}",
-                        fit=ft.ImageFit.COVER,
-                        width=500,
-                        height=500,
-                        border_radius=ft.border_radius.all(20),
-                    ),
-                style=
-                    ft.ButtonStyle(
-                        color={
-                            ft.MaterialState.HOVERED: ft.colors.WHITE,
-                            ft.MaterialState.FOCUSED: ft.colors.BLUE,
-                            ft.MaterialState.DEFAULT: ft.colors.BLACK,
-                        },
-                        bgcolor={ft.MaterialState.FOCUSED: ft.colors.WHITE, ft.MaterialState.DEFAULT: ft.colors.WHITE},
-                        padding={ft.MaterialState.DEFAULT: 0, ft.MaterialState.HOVERED: 20},
-                        overlay_color=ft.colors.TRANSPARENT,
-                        elevation={"pressed": 0, "": 1},
-                        animation_duration=500,
-                        shape={
-                            ft.MaterialState.HOVERED: RoundedRectangleBorder(radius=20),
-                            ft.MaterialState.DEFAULT: RoundedRectangleBorder(radius=20),
-                        },
-                    ),
-                on_click=clickOnImage(None, "https://picsum.photos/400/400?"+str(i))
-            )
-        )
     
     page.update()   
             
-    
-    def ask(e):
-        quest_label.value = "Question: " + question.value
-        question.value = ""
-        question.focus()
-        question.update()
-        page.update()
-        # Send request
     
     def takePic(e):
         image = st.camera_input("Take a picture")
@@ -122,6 +131,7 @@ def main(page: ft.Page):
         page.go(top_view.route)
     
     def route_change(route):
+        global current_pic_path
         page.views.clear()
         page.views.append(
             ft.View(
@@ -145,34 +155,29 @@ def main(page: ft.Page):
                             ft.Text(value="     ", color="#2250c6", size=16, font_family="Plain"),
                         ],
                     ),
-                    ft.Column(
-                        alignment=ft.MainAxisAlignment.CENTER,
-                        controls=[
-                            ft.Row(
-                                [
-                                    ft.Text(value="Choose one of these pictures", color="#000000", size=16, font_family="Plain")
-                                ]
-                            ),
-                            ft.Row(
-                                [
-                                    images,
-                                ],
-                                alignment=ft.MainAxisAlignment.CENTER,
-                            ),
-                            ft.Row(
-                                [
-                                    #question, 
-                                    #ft.ElevatedButton("Ask", on_click=ask)
-                                ],
-                                alignment=ft.MainAxisAlignment.CENTER,
-                            ), 
-                            ft.Row(
-                                [
-                                    #quest_label,
-                                ],
-                                alignment=ft.MainAxisAlignment.CENTER,
-                            )
-                        ],
+                    ft.Container(
+                            margin=(50),
+                            alignment=ft.alignment.center,
+                            content=       
+                                ft.Column(
+                                    alignment=ft.MainAxisAlignment.CENTER,
+                                    controls=[
+                                        ft.Row(
+                                            [
+                                                ft.Text(value="\nChoose one of these pictures\n", color="#8f8f8f", size=14, font_family="Plain")
+                                            ]
+                                        ),
+                                        ft.Row(
+                                            
+                                            controls=
+                                            [
+                                                images,
+                                            ],
+                                            alignment=ft.MainAxisAlignment.CENTER,
+                                        ),
+                                    ],
+                                )
+                            
                     )
                 ],
             )
@@ -200,20 +205,127 @@ def main(page: ft.Page):
                                 ft.Text(value="     ", color="#2250c6", size=16, font_family="Plain"),
                             ],
                         ),
-                        ft.TextButton("Choose another picture", icon="back", on_click=lambda _: page.go("/")),
                         ft.Row(
-                            [   
-                                ft.ElevatedButton("Select a picture", on_click=selectPic),
-                                ft.ElevatedButton("Take a picture", on_click=takePic)
+                            [
+                                ft.TextButton(
+                                    text="Choose another picture", 
+                                    icon=ft.icons.ARROW_BACK,
+                                    icon_color="#2250c6",
+                                    on_click=lambda _: page.go("/")
+                                ),
+                                
+                                ft.TextButton(
+                                    text="Take a picture",
+                                    icon=ft.icons.CAMERA,
+                                    icon_color="#2250c6",
+                                    on_click=takePic
+                                ),
+                            ]
+                        ),
+                        
+                        ft.Container(
+                            margin=(150),
+                            alignment=ft.alignment.center,
+                            content=ft.Row(
+                                spacing=(100),
+                                controls=[
+                                    ft.Image(
+                                            src=current_pic_path,
+                                            fit=ft.ImageFit.COVER,
+                                            width=500,
+                                            height=500,
+                                            border_radius=ft.border_radius.all(20),
+                                    ),
+                                    ft.Column(
+                                        spacing=(40),
+                                        controls=[   
+                                            ft.Text(width=500, value="Ask a question you would have regarding this image and the AI will answer your question.", color="#8f8f8f", size=20, font_family="Plain"),
+                                            question,
+                                            ft.ElevatedButton("Submit this question", on_click=ask, width=500)
+                                        ],
+                                    )
+                                ],
+                            )
+                        )
+                    ],
+                )
+            )
+        if page.route == "/result":
+            page.views.append(
+                ft.View(
+                    "/result",
+                    [
+                        ft.AppBar(
+                            toolbar_height= 100,
+                            leading=ft.Image(
+                                        src=f"/img/logo_w.png",
+                                        #src=f"/icons/icon-512.png",
+                                        fit=ft.ImageFit.CONTAIN,
+                                    ),
+                            leading_width=200,
+                            ##title=ft.Text("AppBar Example"),
+                            center_title=False,
+                            bgcolor="#2250c6",
+                            actions=[
+                                ft.ElevatedButton("About FARI", on_click=about),
+                                ft.Text(value="     ", color="#2250c6", size=16, font_family="Plain"),
+                                ft.ElevatedButton("How does this AI works", on_click=how),
+                                ft.Text(value="     ", color="#2250c6", size=16, font_family="Plain"),
                             ],
                         ),
+                        ft.Row(
+                            [
+                                ft.TextButton(
+                                    text="Ask another question on this image", 
+                                    icon=ft.icons.ARROW_BACK,
+                                    icon_color="#2250c6",
+                                    on_click=lambda _: page.go("/ask")
+                                ),
+                            ]
+                        ),
+                        
+                        ft.Container(
+                            margin=(130),
+                            alignment=ft.alignment.center,
+                            content=ft.Column(
+                                spacing=(40),
+                                controls=[
+                                ft.Row(
+                                    spacing=(100),
+                                    controls=[
+                                        ft.Image(
+                                                src=current_pic_path,
+                                                fit=ft.ImageFit.COVER,
+                                                width=500,
+                                                height=500,
+                                                border_radius=ft.border_radius.all(20),
+                                        ),
+                                        ft.Column(
+                                            spacing=(20),
+                                            controls=[   
+                                                ft.Text(value="Your question:", color="#757575", size=14, font_family="Plain"),
+                                                question_print,
+                                                ft.Text(value="Artificial intelligence answer:", color="#757575", size=14, font_family="Plain"),
+                                                AI_resp_print,
+                                                ft.Text(value="Artificial intelligence textual explanation:", color="#757575", size=14, font_family="Plain"),
+                                                AI_expl_print,
+                                                ft.Text(width=500,value="The highlighted area in orange on the picture are the parts of the picture the artificial intelligence used to answer your question.", color="#0075FF", size=14, font_family="Plain"),
+                                                ft.ProgressRing(width=32, height=32, stroke_width = 2, color="#2250c6"), 
+                                            ],
+                                        )
+                                    ],
+                                ),
+                                ft.ElevatedButton("Try again with another image", on_click=lambda _: page.go("/"), width=1120)
+                                ]
+                            )
+                        )
                     ],
                 )
             )
         if page.route == "/about":
             page.views.append(
                 ft.View(
-                    "/ask",
+                    "/about",
                     [
                         ft.AppBar(
                             toolbar_height= 100,
@@ -241,7 +353,7 @@ def main(page: ft.Page):
         if page.route == "/how":
             page.views.append(
                 ft.View(
-                    "/ask",
+                    "/how",
                     [
                         ft.AppBar(
                             toolbar_height= 100,
