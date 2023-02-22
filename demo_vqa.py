@@ -65,6 +65,7 @@ with col3:
         data = {"data":[image_data, question], "cleared": False, "example_id": None}
         result = query(data, api_token)
         image = result["data"][2].split(",")[1].encode('utf-8')
+        print(image)
         decoded_image=base64.b64decode((image))
         st.write(result["data"][0])
         st.write(result["data"][1])

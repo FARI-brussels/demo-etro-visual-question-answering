@@ -8,15 +8,11 @@ import base64
 
 api_token = "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"
 global current_pic_path
+global decoded_image
 current_pic_path=""
+decoded_image=""
 
 # flet run main.py -d
-
-def query(payload, api_token):
-	headers = {"Authorization": f"Bearer {api_token}"}
-	API_URL = f"https://fawaz-nlx-gpt.hf.space/api/predict/"
-	response = requests.post(API_URL, headers=headers, json=payload)
-	return response.json()
 
 def main(page: ft.Page):
     def about(e):
@@ -25,8 +21,33 @@ def main(page: ft.Page):
     def how(e):
         page.go("/how")
         
+    def query(payload, api_token): # Call API
+        headers = {"Authorization": f"Bearer {api_token}"}
+        API_URL = f"https://fawaz-nlx-gpt.hf.space/api/predict/"
+        response = requests.post(API_URL, headers=headers, json=payload)
+        return response.json()
+        
     def ask(e):
+        global decoded_image
+        
+        page.views.append(
+            ft.ProgressRing(width=32, height=32, stroke_width = 2, color="#2250c6"), 
+        )
+        page.update()
+    
+        
+        image = requests.get(current_pic_path).content #Get image online
+        image_data = "data:image/png;base64," + base64.b64encode(image).decode('utf-8')
+        
+        data = {"data":[image_data, question.value], "cleared": False, "example_id": None}
+        result = query(data, api_token)
+        image = result["data"][2].split(",")[1]#.encode('utf-8')
+        decoded_image=image
+        
+        AI_resp_print. value= result["data"][0]         
+        AI_expl_print.value = result["data"][1]
         question_print.value = question.value
+        
         question.value = ""
         question.focus()
         question.update()
@@ -81,9 +102,6 @@ def main(page: ft.Page):
     }
 
     
-
-    file_picker = ft.FilePicker()
-    
     question = ft.TextField(width=500, hint_text="Ask question about the image?")
     question_print = ft.TextField(width=500, hint_text="??", disabled=True)
     AI_resp_print = ft.TextField(width=500, hint_text="Yes", disabled=True)
@@ -109,29 +127,14 @@ def main(page: ft.Page):
             image_data = "data:image/png;base64," +base64.b64encode(image.read()).decode('utf-8')
             print("DEBUG")
         # Run the webcam
-    
-    def selectPic(e):
-        file_picker.pick_files(allow_multiple=True)
-        upload_list = []
-        if file_picker.result != None and file_picker.result.files != None:
-            for f in file_picker.result.files:
-                upload_list.append(
-                    FilePickerUploadFile(
-                        f.name,
-                        upload_url=page.get_upload_url(f.name, 600),
-                    )
-                )
-            file_picker.upload(upload_list)
-        print(upload_list)
-
-    
+        
     def view_pop(view):
         page.views.pop()
         top_view = page.views[-1]
         page.go(top_view.route)
     
     def route_change(route):
-        global current_pic_path
+        global current_pic_path, decoded_image
         page.views.clear()
         page.views.append(
             ft.View(
@@ -294,7 +297,7 @@ def main(page: ft.Page):
                                     spacing=(100),
                                     controls=[
                                         ft.Image(
-                                                src=current_pic_path,
+                                                src_base64=decoded_image,
                                                 fit=ft.ImageFit.COVER,
                                                 width=500,
                                                 height=500,
@@ -310,7 +313,6 @@ def main(page: ft.Page):
                                                 ft.Text(value="Artificial intelligence textual explanation:", color="#757575", size=14, font_family="Plain"),
                                                 AI_expl_print,
                                                 ft.Text(width=500,value="The highlighted area in orange on the picture are the parts of the picture the artificial intelligence used to answer your question.", color="#0075FF", size=14, font_family="Plain"),
-                                                ft.ProgressRing(width=32, height=32, stroke_width = 2, color="#2250c6"), 
                                             ],
                                         )
                                     ],
