@@ -57,7 +57,7 @@ with col2:
         st.image(image)
 
 with col3:
-    question = st.text_input('question', 'Ask a question')
+    question = st.text_input('Ask a question', '')
     submit = st.button('Submit')
 
     if submit:
