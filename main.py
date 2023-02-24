@@ -136,7 +136,7 @@ def main(page: ft.Page):
         global imageviewer
         items = []
         for i in range(0, 10):
-            shift = random.randint(0, 40)
+            shift = random.randint(0, 10)
             btn = ft.ElevatedButton(
                     content= 
                         ft.Image(
