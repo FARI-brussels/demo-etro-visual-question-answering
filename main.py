@@ -17,7 +17,7 @@ decoded_image=""
 # flet run main.py -d
 
 def main(page: ft.Page):
-    global current_pic_path
+    global current_pic_path, imageviewer
     
     def about(e):
         page.go("/about")   
@@ -30,15 +30,47 @@ def main(page: ft.Page):
         API_URL = f"https://fawaz-nlx-gpt.hf.space/api/predict/"
         response = requests.post(API_URL, headers=headers, json=payload)
         return response.json()
-        
-    def ask(e):
-        global decoded_image, image_cam
-        
+    
+    def loadingScreen():
         page.views.append(
-            ft.ProgressRing(width=32, height=32, stroke_width = 2, color="#2250c6"), 
+            ft.View(
+                    "/blank",
+                    [
+                        ft.AppBar(
+                            toolbar_height= 100,
+                            leading=ft.Image(
+                                        src=f"/img/logo_w.png",
+                                        fit=ft.ImageFit.CONTAIN,
+                                    ),
+                            leading_width=200,
+                            center_title=False,
+                            bgcolor="#2250c6",
+                            actions=[
+                                ft.ElevatedButton("About FARI", on_click=about),
+                                ft.Text(value="     ", color="#2250c6", size=16, font_family="Plain"),
+                                ft.ElevatedButton("How does this AI works", on_click=how),
+                                ft.Text(value="     ", color="#2250c6", size=16, font_family="Plain"),
+                            ],
+                        ),
+                        ft.Container(
+                            margin=(150),
+                            alignment=ft.alignment.center,
+                            content=
+                            ft.Column(
+                                spacing=(40),
+                                controls=[
+                                    ft.ProgressRing(width=64, height=64, stroke_width = 4, color="#2250c6"), 
+                                ]
+                            )
+                        ),
+                    ],
+                )
         )
         page.update()
     
+    def ask(e):
+        global decoded_image, image_cam
+        loadingScreen()
         try:
             image = requests.get(current_pic_path).content #Get image online
         except:
@@ -47,7 +79,7 @@ def main(page: ft.Page):
             pil_im.save(b, 'jpeg')
             im_bytes = b.getvalue()
             image = im_bytes
-        print("DEBUG:", type(image))
+            
         image_data = "data:image/png;base64," + base64.b64encode(image).decode('utf-8')
             
         data = {"data":[image_data, question.value], "cleared": False, "example_id": None}
@@ -56,7 +88,7 @@ def main(page: ft.Page):
         image = result["data"][2].split(",")[1]#.encode('utf-8')
         decoded_image=image
         
-        AI_resp_print. value= result["data"][0]         
+        AI_resp_print.value= result["data"][0]         
         AI_expl_print.value = result["data"][1]
         question_print.value = question.value
         
@@ -149,6 +181,8 @@ def main(page: ft.Page):
             border_radius=ft.border_radius.all(20),
         )
         page.update()
+        page.go("/blank")
+        page.go("/ask")
         
     def view_pop(view):
         page.views.pop()
@@ -281,11 +315,9 @@ def main(page: ft.Page):
                             toolbar_height= 100,
                             leading=ft.Image(
                                         src=f"/img/logo_w.png",
-                                        #src=f"/icons/icon-512.png",
                                         fit=ft.ImageFit.CONTAIN,
                                     ),
                             leading_width=200,
-                            ##title=ft.Text("AppBar Example"),
                             center_title=False,
                             bgcolor="#2250c6",
                             actions=[
@@ -353,11 +385,9 @@ def main(page: ft.Page):
                             toolbar_height= 100,
                             leading=ft.Image(
                                         src=f"/img/logo_w.png",
-                                        #src=f"/icons/icon-512.png",
                                         fit=ft.ImageFit.CONTAIN,
                                     ),
                             leading_width=200,
-                            ##title=ft.Text("AppBar Example"),
                             center_title=False,
                             bgcolor="#2250c6",
                             actions=[
@@ -395,11 +425,9 @@ def main(page: ft.Page):
                             toolbar_height= 100,
                             leading=ft.Image(
                                         src=f"/img/logo_w.png",
-                                        #src=f"/icons/icon-512.png",
                                         fit=ft.ImageFit.CONTAIN,
                                     ),
                             leading_width=200,
-                            ##title=ft.Text("AppBar Example"),
                             center_title=False,
                             bgcolor="#2250c6",
                             actions=[
@@ -424,6 +452,41 @@ def main(page: ft.Page):
                                     color="#757575", size=14, font_family="Plain", width=800
                                     ),
                                     ft.TextButton("Learn more", icon=ft.icons.LINK_ROUNDED, icon_color="#2250c6", on_click=lambda _: page.launch_url('https://researchportal.vub.be/en/publications/nlx-gpt-a-model-for-natural-language-explanations-in-vision-and-v')),
+                                ]
+                            )
+                        ),
+                    ],
+                )
+            )
+        if page.route == "/blank":
+            page.views.append(
+                ft.View(
+                    "/blank",
+                    [
+                        ft.AppBar(
+                            toolbar_height= 100,
+                            leading=ft.Image(
+                                        src=f"/img/logo_w.png",
+                                        fit=ft.ImageFit.CONTAIN,
+                                    ),
+                            leading_width=200,
+                            center_title=False,
+                            bgcolor="#2250c6",
+                            actions=[
+                                ft.ElevatedButton("About FARI", on_click=about),
+                                ft.Text(value="     ", color="#2250c6", size=16, font_family="Plain"),
+                                ft.ElevatedButton("How does this AI works", on_click=how),
+                                ft.Text(value="     ", color="#2250c6", size=16, font_family="Plain"),
+                            ],
+                        ),
+                        ft.Container(
+                            margin=(150),
+                            alignment=ft.alignment.center,
+                            content=
+                            ft.Column(
+                                spacing=(40),
+                                controls=[
+                                    ft.ProgressRing(width=64, height=64, stroke_width = 4, color="#2250c6"), 
                                 ]
                             )
                         ),
