@@ -15,8 +15,6 @@ pic_counter = 0
 current_pic_path=""
 decoded_image=""
 
-# flet run main.py -d
-
 def main(page: ft.Page):
     global current_pic_path, imageviewer
     
@@ -33,6 +31,8 @@ def main(page: ft.Page):
         return response.json()
     
     def loadingScreen():
+        """Show a loading bar when action are made in background
+        """
         page.views.append(
             ft.View(
                     "/blank",
@@ -70,6 +70,11 @@ def main(page: ft.Page):
         page.update()
     
     def ask(e):
+        """Make a request to the API with the selected image
+
+        Args:
+            e (error): No way there is an error, trust me :)
+        """
         global decoded_image, image_cam
         loadingScreen()
         try:
@@ -100,11 +105,21 @@ def main(page: ft.Page):
         page.go("/result")
     
     def clickOnImage(data):
+        """Change the current pic path to the one selected by the user
+
+        Args:
+            data (string): Path of the selected image (URL or LOCAL)
+        """
         global current_pic_path
         current_pic_path = data
         page.go("/ask")
     
     def items():
+        """Add all the images on the home page
+
+        Returns:
+            list: List of Button item containing the image
+        """
         global imageviewer
         items = []
         for i in range(0, 10):
@@ -138,35 +153,15 @@ def main(page: ft.Page):
                     on_click=lambda e: clickOnImage(e.control.data),
             )
             items.append(btn)
-        return items
-    
-    
-    page.title = "FARI - Visual question answering"
-    page.fonts = {
-        "Plain": "/fonts/Plain-Regular.otf",
-        "Rhetorik": "/fonts/RhetorikSerifTrial-Regular.ttf"
-    }
-
-    
-    question = ft.TextField(width=500, hint_text="Ask question about the image?")
-    question_print = ft.TextField(width=500, hint_text="??", disabled=True)
-    AI_resp_print = ft.TextField(width=500, hint_text="Yes", disabled=True)
-    AI_expl_print = ft.TextField(width=500, hint_text="Because", disabled=True)
-    
-    images = ft.GridView(
-        expand=1,
-        runs_count=3,
-        max_extent=400,
-        child_aspect_ratio=1.0,
-        spacing=40,
-        run_spacing=40,
-        controls=items(),
-    )
-    
-    page.update()   
+        return items 
             
     
     def takePic(e):
+        """Take a picture of the user thanks to the webcam
+
+        Args:
+            e (error): No way there is an error, trust me :)
+        """
         global current_pic_path, image_cam, pic_counter
         cam = cv.VideoCapture(0)   
         s, img = cam.read()
@@ -180,10 +175,19 @@ def main(page: ft.Page):
         page.update()
         
     def view_pop(view):
+        """Change the current view
+
+        Args:
+            view (Flet view): New view
+        """
         page.views.pop()
         top_view = page.views[-1]
         page.go(top_view.route)
     
+    
+    #===============================================================================
+    # UIX & GUI DEFINITION
+    #===============================================================================  
     def route_change(route):
         global current_pic_path, decoded_image, imageviewer
         imageviewer = ft.Image(
@@ -489,6 +493,32 @@ def main(page: ft.Page):
                 )
             )
         page.update()
+
+    #===============================================================================
+    # MAIN CODE & GLOBAL VAR
+    #===============================================================================    
+    page.title = "FARI - Visual question answering"
+    page.fonts = {
+        "Plain": "/fonts/Plain-Regular.otf",
+        "Rhetorik": "/fonts/RhetorikSerifTrial-Regular.ttf"
+    }
+
+    question = ft.TextField(width=500, hint_text="Ask question about the image?")
+    question_print = ft.TextField(width=500, hint_text="??", disabled=True)
+    AI_resp_print = ft.TextField(width=500, hint_text="Yes", disabled=True)
+    AI_expl_print = ft.TextField(width=500, hint_text="Because", disabled=True)
+    
+    images = ft.GridView(
+        expand=1,
+        runs_count=3,
+        max_extent=400,
+        child_aspect_ratio=1.0,
+        spacing=40,
+        run_spacing=40,
+        controls=items(),
+    )
+    
+    page.update()  
     
     page.on_route_change = route_change
     page.on_view_pop = view_pop
