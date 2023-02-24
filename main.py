@@ -10,7 +10,8 @@ import cv2 as cv
 from PIL import Image
 
 api_token = "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"
-global current_pic_path, decoded_image, imageviewer, image_cam
+global current_pic_path, decoded_image, imageviewer, image_cam, pic_counter
+pic_counter = 0
 current_pic_path=""
 decoded_image=""
 
@@ -166,23 +167,17 @@ def main(page: ft.Page):
             
     
     def takePic(e):
-        global current_pic_path, imageviewer, image_cam
+        global current_pic_path, image_cam, pic_counter
         cam = cv.VideoCapture(0)   
         s, img = cam.read()
         if s:
-            cv.imwrite("assets/img/cam.jpg",img)
+            cv.imwrite("assets/img/cam"+ str(pic_counter) + ".jpg",img)
             image_cam = img
-        current_pic_path = f"/img/cam.jpg"
-        imageviewer = ft.Image(
-            src=current_pic_path,
-            fit=ft.ImageFit.COVER,
-            width=500,
-            height=500,
-            border_radius=ft.border_radius.all(20),
-        )
-        page.update()
+        current_pic_path = f"assets/img/cam"+ str(pic_counter) + ".jpg"
+        pic_counter+=1
         page.go("/blank")
         page.go("/ask")
+        page.update()
         
     def view_pop(view):
         page.views.pop()
