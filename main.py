@@ -3,19 +3,22 @@ from flet import BorderSide
 from flet import RoundedRectangleBorder
 
 import requests
-#import streamlit as st
+import io
+
 import base64
-import cv2
+import cv2 as cv
+from PIL import Image
 
 api_token = "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"
-global current_pic_path
-global decoded_image
+global current_pic_path, decoded_image, imageviewer, image_cam
 current_pic_path=""
 decoded_image=""
 
 # flet run main.py -d
 
 def main(page: ft.Page):
+    global current_pic_path
+    
     def about(e):
         page.go("/about")   
 
@@ -29,19 +32,27 @@ def main(page: ft.Page):
         return response.json()
         
     def ask(e):
-        global decoded_image
+        global decoded_image, image_cam
         
         page.views.append(
             ft.ProgressRing(width=32, height=32, stroke_width = 2, color="#2250c6"), 
         )
         page.update()
     
-        
-        image = requests.get(current_pic_path).content #Get image online
+        try:
+            image = requests.get(current_pic_path).content #Get image online
+        except:
+            pil_im = Image.fromarray(image_cam)
+            b = io.BytesIO()
+            pil_im.save(b, 'jpeg')
+            im_bytes = b.getvalue()
+            image = im_bytes
+        print("DEBUG:", type(image))
         image_data = "data:image/png;base64," + base64.b64encode(image).decode('utf-8')
-        
+            
         data = {"data":[image_data, question.value], "cleared": False, "example_id": None}
         result = query(data, api_token)
+        
         image = result["data"][2].split(",")[1]#.encode('utf-8')
         decoded_image=image
         
@@ -55,12 +66,13 @@ def main(page: ft.Page):
         page.update()
         page.go("/result")
     
-    def clickOnImage(e):
+    def clickOnImage(data):
         global current_pic_path
-        current_pic_path = e
+        current_pic_path = data
         page.go("/ask")
     
     def items():
+        global imageviewer
         items = []
         for i in range(0, 10):
             btn = ft.ElevatedButton(
@@ -108,7 +120,6 @@ def main(page: ft.Page):
     AI_resp_print = ft.TextField(width=500, hint_text="Yes", disabled=True)
     AI_expl_print = ft.TextField(width=500, hint_text="Because", disabled=True)
     
-    
     images = ft.GridView(
         expand=1,
         runs_count=3,
@@ -123,11 +134,21 @@ def main(page: ft.Page):
             
     
     def takePic(e):
-        image = st.camera_input("Take a picture")
-        if image:
-            image_data = "data:image/png;base64," +base64.b64encode(image.read()).decode('utf-8')
-            
-        # Run the webcam
+        global current_pic_path, imageviewer, image_cam
+        cam = cv.VideoCapture(0)   
+        s, img = cam.read()
+        if s:
+            cv.imwrite("assets/img/cam.jpg",img)
+            image_cam = img
+        current_pic_path = f"/img/cam.jpg"
+        imageviewer = ft.Image(
+            src=current_pic_path,
+            fit=ft.ImageFit.COVER,
+            width=500,
+            height=500,
+            border_radius=ft.border_radius.all(20),
+        )
+        page.update()
         
     def view_pop(view):
         page.views.pop()
@@ -135,7 +156,14 @@ def main(page: ft.Page):
         page.go(top_view.route)
     
     def route_change(route):
-        global current_pic_path, decoded_image
+        global current_pic_path, decoded_image, imageviewer
+        imageviewer = ft.Image(
+            src=current_pic_path,
+            fit=ft.ImageFit.COVER,
+            width=500,
+            height=500,
+            border_radius=ft.border_radius.all(20),
+        )
         page.views.clear()
         page.views.append(
             ft.View(
@@ -145,11 +173,9 @@ def main(page: ft.Page):
                         toolbar_height= 100,
                         leading=ft.Image(
                                     src=f"/img/logo_w.png",
-                                    #src=f"/icons/icon-512.png",
                                     fit=ft.ImageFit.CONTAIN,
                                 ),
                         leading_width=200,
-                        ##title=ft.Text("AppBar Example"),
                         center_title=False,
                         bgcolor="#2250c6",
                         actions=[
@@ -195,11 +221,9 @@ def main(page: ft.Page):
                             toolbar_height= 100,
                             leading=ft.Image(
                                         src=f"/img/logo_w.png",
-                                        #src=f"/icons/icon-512.png",
                                         fit=ft.ImageFit.CONTAIN,
                                     ),
                             leading_width=200,
-                            ##title=ft.Text("AppBar Example"),
                             center_title=False,
                             bgcolor="#2250c6",
                             actions=[
@@ -233,13 +257,7 @@ def main(page: ft.Page):
                             content=ft.Row(
                                 spacing=(100),
                                 controls=[
-                                    ft.Image(
-                                            src=current_pic_path,
-                                            fit=ft.ImageFit.COVER,
-                                            width=500,
-                                            height=500,
-                                            border_radius=ft.border_radius.all(20),
-                                    ),
+                                    imageviewer,
                                     ft.Column(
                                         spacing=(40),
                                         controls=[   
