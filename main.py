@@ -3,8 +3,9 @@ from flet import BorderSide
 from flet import RoundedRectangleBorder
 
 import requests
-import streamlit as st
+#import streamlit as st
 import base64
+import cv2
 
 api_token = "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"
 global current_pic_path
@@ -65,7 +66,7 @@ def main(page: ft.Page):
             btn = ft.ElevatedButton(
                     content= 
                         ft.Image(
-                            src=f"https://picsum.photos/400/400?{i}",
+                            src=f"https://picsum.photos/id/{i*10}/400/400",
                             fit=ft.ImageFit.COVER,
                             width=500,
                             height=500,
@@ -88,7 +89,7 @@ def main(page: ft.Page):
                                 ft.MaterialState.DEFAULT: RoundedRectangleBorder(radius=20),
                             },
                         ),
-                    data = f"https://picsum.photos/400/400?"+str(i),
+                    data = f"https://picsum.photos/id/{i*10}/400/400",
                     on_click=lambda e: clickOnImage(e.control.data),
             )
             items.append(btn)
@@ -125,7 +126,7 @@ def main(page: ft.Page):
         image = st.camera_input("Take a picture")
         if image:
             image_data = "data:image/png;base64," +base64.b64encode(image.read()).decode('utf-8')
-            print("DEBUG")
+            
         # Run the webcam
         
     def view_pop(view):
@@ -313,7 +314,8 @@ def main(page: ft.Page):
                                                 ft.Text(value="Artificial intelligence textual explanation:", color="#757575", size=14, font_family="Plain"),
                                                 AI_expl_print,
                                                 ft.Text(width=500,value="The highlighted area in orange on the picture are the parts of the picture the artificial intelligence used to answer your question.", color="#0075FF", size=14, font_family="Plain"),
-                                            ],
+                                                ft.TextButton("How does it work ?", icon=ft.icons.LINK_ROUNDED, icon_color="#2250c6", on_click=lambda _: page.go('/how')),
+                                            ],  
                                         )
                                     ],
                                 ),
@@ -347,8 +349,22 @@ def main(page: ft.Page):
                                 ft.Text(value="     ", color="#2250c6", size=16, font_family="Plain"),
                             ],
                         ),
-                        ft.TextButton("Back home", icon="back", on_click=lambda _: page.go("/")),
-                        ft.Text(value="About FARI", color="#000000", size=20, font_family="Plain")
+                        ft.TextButton("Back home", icon=ft.icons.ARROW_BACK, icon_color="#2250c6", on_click=lambda _: page.go("/")),
+                        ft.Container(
+                            margin=(130),
+                            alignment=ft.alignment.center,
+                            content=
+                            ft.Column(
+                                spacing=(40),
+                                controls=[
+                                    ft.Text(value="We put responsible and sustainable AI research and innovation at the core of our activities.", color="#2250c6", size=35, font_family="Rhetorik", width=800),
+                                    ft.Text(value="FARI is an initiative that aims to develop, study and foster the adoption and governance of AI, \nData and Robotics technologies in a trustable, transparent, open, inclusive, ethical and responsible way. \nInspired by humanistic and European values, FARI aims at helping to leverage AI-related technologies for societal benefits, \nsuch as strengthening and preserving Fundamental Human Rights and achieving United Nations' Sustainable Development Goals.",
+                                    color="#757575", size=14, font_family="Plain"
+                                    ),
+                                    ft.TextButton("Learn more", icon=ft.icons.LINK_ROUNDED, icon_color="#2250c6", on_click=lambda _: page.launch_url('https://www.fari.brussels/institute')),
+                                ]
+                            )
+                        ),
                     ],
                 )
             )
@@ -375,8 +391,24 @@ def main(page: ft.Page):
                                 ft.Text(value="     ", color="#2250c6", size=16, font_family="Plain"),
                             ],
                         ),
-                        ft.TextButton("Back home", icon="back", on_click=lambda _: page.go("/")),
-                        ft.Text(value="How does this AI works", color="#000000", size=20, font_family="Plain")
+                        ft.TextButton("Back home", icon=ft.icons.ARROW_BACK, icon_color="#2250c6", on_click=lambda _: page.go("/")),
+                        ft.Container(
+                            margin=(110),
+                            alignment=ft.alignment.center,
+                            content=
+                            ft.Column(
+                                spacing=(40),
+                                controls=[
+                                    ft.Text(value="How does this AI works ?", color="#2250c6", size=35, font_family="Rhetorik", width=800),
+                                    ft.Text(value="NLX-GPT: A Model for Natural Language Explanations in Vision and Vision-Language Tasks", color="#3a3a3a", size=28, font_family="Rhetorik", width=800),
+                                    ft.Text(value="Fawaz Sammani1, Tanmoy Mukherjee1, Nikos Deligiannis1", color="#3a3a3a", size=14, font_family="Rhetorik", width=800),
+                                    ft.Text(value="Natural language explanation (NLE) models aim at explaining the decision-making process of a black box system via generating natural language sentences which are human-friendly, high-level and fine-grained. Current NLE models1 explain the decision-making process of a vision or vision-language model (a.k.a., task model), e.g., a VQA model, via a language model (a.k.a., explanation model), e.g., GPT. Other than the additional memory resources and inference time required by the task model, the task and explanation models are completely independent, which disassociates the explanation from the reasoning process made to predict the answer. We introduce NLX-GPT, a general, compact and faithful language model that can simultaneously predict an answer and explain it. We first conduct pre-training on large scale data of image-caption pairs for general understanding of images, and then formulate the answer as a text prediction task along with the explanation. Without region proposals nor a task model, our resulting overall framework attains better evaluation scores, contains much less parameters and is 15× faster than the current SoA model. We then address the problem of evaluating the explanations which can be in many times generic, data-biased and can come in several forms. We therefore design 2 new evaluation measures: (1) explain-predict and (2) retrieval-based attack, a selfevaluation framework that requires no labels. ",
+                                    color="#757575", size=14, font_family="Plain", width=800
+                                    ),
+                                    ft.TextButton("Learn more", icon=ft.icons.LINK_ROUNDED, icon_color="#2250c6", on_click=lambda _: page.launch_url('https://researchportal.vub.be/en/publications/nlx-gpt-a-model-for-natural-language-explanations-in-vision-and-v')),
+                                ]
+                            )
+                        ),
                     ],
                 )
             )

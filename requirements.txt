@@ -1,0 +1,3 @@
+flet
+streamlit
+opencv-python
