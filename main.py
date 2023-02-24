@@ -1,9 +1,9 @@
 import flet as ft
-from flet import BorderSide
 from flet import RoundedRectangleBorder
 
 import requests
 import io
+import random
 
 import base64
 import cv2 as cv
@@ -19,12 +19,25 @@ def main(page: ft.Page):
     global current_pic_path, imageviewer
     
     def about(e):
+        """Load the about page
+        """
         page.go("/about")   
 
     def how(e):
+        """Load the 'How does this AI works' page
+        """
         page.go("/how")
         
-    def query(payload, api_token): # Call API
+    def query(payload, api_token):
+        """Call the API
+
+        Args:
+            payload (json): Data to send
+            api_token (string): Token to use the API
+
+        Returns:
+            json: API result
+        """
         headers = {"Authorization": f"Bearer {api_token}"}
         API_URL = f"https://fawaz-nlx-gpt.hf.space/api/predict/"
         response = requests.post(API_URL, headers=headers, json=payload)
@@ -123,10 +136,11 @@ def main(page: ft.Page):
         global imageviewer
         items = []
         for i in range(0, 10):
+            shift = random.randint(0, 40)
             btn = ft.ElevatedButton(
                     content= 
                         ft.Image(
-                            src=f"https://picsum.photos/id/{i*10}/400/400",
+                            src=f"https://picsum.photos/id/{(i*10)+shift}/400/400",
                             fit=ft.ImageFit.COVER,
                             width=500,
                             height=500,
@@ -149,7 +163,7 @@ def main(page: ft.Page):
                                 ft.MaterialState.DEFAULT: RoundedRectangleBorder(radius=20),
                             },
                         ),
-                    data = f"https://picsum.photos/id/{i*10}/400/400",
+                    data = f"https://picsum.photos/id/{(i*10)+shift}/400/400",
                     on_click=lambda e: clickOnImage(e.control.data),
             )
             items.append(btn)
