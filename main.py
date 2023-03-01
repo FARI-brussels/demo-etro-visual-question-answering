@@ -50,22 +50,6 @@ def main(page: ft.Page):
             ft.View(
                     "/blank",
                     [
-                        ft.AppBar(
-                            toolbar_height= 100,
-                            leading=ft.Image(
-                                        src=f"/img/logo_w.png",
-                                        fit=ft.ImageFit.CONTAIN,
-                                    ),
-                            leading_width=200,
-                            center_title=False,
-                            bgcolor="#2250c6",
-                            actions=[
-                                ft.ElevatedButton("About FARI", on_click=about),
-                                ft.Text(value="     ", color="#2250c6", size=16, font_family="Plain"),
-                                ft.ElevatedButton("How does this AI works", on_click=how),
-                                ft.Text(value="     ", color="#2250c6", size=16, font_family="Plain"),
-                            ],
-                        ),
                         ft.Container(
                             margin=(150),
                             alignment=ft.alignment.center,
@@ -216,22 +200,6 @@ def main(page: ft.Page):
             ft.View(
                 "/",
                 [   
-                    ft.AppBar(
-                        toolbar_height= 100,
-                        leading=ft.Image(
-                                    src=f"/img/logo_w.png",
-                                    fit=ft.ImageFit.CONTAIN,
-                                ),
-                        leading_width=200,
-                        center_title=False,
-                        bgcolor="#2250c6",
-                        actions=[
-                            ft.ElevatedButton("About FARI", on_click=about),
-                            ft.Text(value="     ", color="#2250c6", size=16, font_family="Plain"),
-                            ft.ElevatedButton("How does this AI works", on_click=how),
-                            ft.Text(value="     ", color="#2250c6", size=16, font_family="Plain"),
-                        ],
-                    ),
                     ft.Container(
                             margin=(50),
                             alignment=ft.alignment.center,
@@ -241,7 +209,7 @@ def main(page: ft.Page):
                                     controls=[
                                         ft.Row(
                                             [
-                                                ft.Text(value="\nChoose one of these pictures\n", color="#8f8f8f", size=14, font_family="Plain")
+                                                ft.Text(value="\nChoose one of these pictures\n", color="#8f8f8f", size=18, font_family="Plain")
                                             ]
                                         ),
                                         ft.Row(
@@ -264,22 +232,6 @@ def main(page: ft.Page):
                 ft.View(
                     "/ask",
                     [
-                        ft.AppBar(
-                            toolbar_height= 100,
-                            leading=ft.Image(
-                                        src=f"/img/logo_w.png",
-                                        fit=ft.ImageFit.CONTAIN,
-                                    ),
-                            leading_width=200,
-                            center_title=False,
-                            bgcolor="#2250c6",
-                            actions=[
-                                ft.ElevatedButton("About FARI", on_click=about),
-                                ft.Text(value="     ", color="#2250c6", size=16, font_family="Plain"),
-                                ft.ElevatedButton("How does this AI works", on_click=how),
-                                ft.Text(value="     ", color="#2250c6", size=16, font_family="Plain"),
-                            ],
-                        ),
                         ft.Row(
                             [
                                 ft.TextButton(
@@ -324,22 +276,6 @@ def main(page: ft.Page):
                 ft.View(
                     "/result",
                     [
-                        ft.AppBar(
-                            toolbar_height= 100,
-                            leading=ft.Image(
-                                        src=f"/img/logo_w.png",
-                                        fit=ft.ImageFit.CONTAIN,
-                                    ),
-                            leading_width=200,
-                            center_title=False,
-                            bgcolor="#2250c6",
-                            actions=[
-                                ft.ElevatedButton("About FARI", on_click=about),
-                                ft.Text(value="     ", color="#2250c6", size=16, font_family="Plain"),
-                                ft.ElevatedButton("How does this AI works", on_click=how),
-                                ft.Text(value="     ", color="#2250c6", size=16, font_family="Plain"),
-                            ],
-                        ),
                         ft.Row(
                             [
                                 ft.TextButton(
@@ -389,109 +325,11 @@ def main(page: ft.Page):
                     ],
                 )
             )
-        if page.route == "/about":
-            page.views.append(
-                ft.View(
-                    "/about",
-                    [
-                        ft.AppBar(
-                            toolbar_height= 100,
-                            leading=ft.Image(
-                                        src=f"/img/logo_w.png",
-                                        fit=ft.ImageFit.CONTAIN,
-                                    ),
-                            leading_width=200,
-                            center_title=False,
-                            bgcolor="#2250c6",
-                            actions=[
-                                ft.ElevatedButton("About FARI", on_click=about),
-                                ft.Text(value="     ", color="#2250c6", size=16, font_family="Plain"),
-                                ft.ElevatedButton("How does this AI works", on_click=how),
-                                ft.Text(value="     ", color="#2250c6", size=16, font_family="Plain"),
-                            ],
-                        ),
-                        ft.TextButton("Back home", icon=ft.icons.ARROW_BACK, icon_color="#2250c6", on_click=lambda _: page.go("/")),
-                        ft.Container(
-                            margin=(130),
-                            alignment=ft.alignment.center,
-                            content=
-                            ft.Column(
-                                spacing=(40),
-                                controls=[
-                                    ft.Text(value="We put responsible and sustainable AI research and innovation at the core of our activities.", color="#2250c6", size=35, font_family="Rhetorik", width=800),
-                                    ft.Text(value="FARI is an initiative that aims to develop, study and foster the adoption and governance of AI, \nData and Robotics technologies in a trustable, transparent, open, inclusive, ethical and responsible way. \nInspired by humanistic and European values, FARI aims at helping to leverage AI-related technologies for societal benefits, \nsuch as strengthening and preserving Fundamental Human Rights and achieving United Nations' Sustainable Development Goals.",
-                                    color="#757575", size=14, font_family="Plain"
-                                    ),
-                                    ft.TextButton("Learn more", icon=ft.icons.LINK_ROUNDED, icon_color="#2250c6", on_click=lambda _: page.launch_url('https://www.fari.brussels/institute')),
-                                ]
-                            )
-                        ),
-                    ],
-                )
-            )
-        if page.route == "/how":
-            page.views.append(
-                ft.View(
-                    "/how",
-                    [
-                        ft.AppBar(
-                            toolbar_height= 100,
-                            leading=ft.Image(
-                                        src=f"/img/logo_w.png",
-                                        fit=ft.ImageFit.CONTAIN,
-                                    ),
-                            leading_width=200,
-                            center_title=False,
-                            bgcolor="#2250c6",
-                            actions=[
-                                ft.ElevatedButton("About FARI", on_click=about),
-                                ft.Text(value="     ", color="#2250c6", size=16, font_family="Plain"),
-                                ft.ElevatedButton("How does this AI works", on_click=how),
-                                ft.Text(value="     ", color="#2250c6", size=16, font_family="Plain"),
-                            ],
-                        ),
-                        ft.TextButton("Back home", icon=ft.icons.ARROW_BACK, icon_color="#2250c6", on_click=lambda _: page.go("/")),
-                        ft.Container(
-                            margin=(110),
-                            alignment=ft.alignment.center,
-                            content=
-                            ft.Column(
-                                spacing=(40),
-                                controls=[
-                                    ft.Text(value="How does this AI works ?", color="#2250c6", size=35, font_family="Rhetorik", width=800),
-                                    ft.Text(value="NLX-GPT: A Model for Natural Language Explanations in Vision and Vision-Language Tasks", color="#3a3a3a", size=28, font_family="Rhetorik", width=800),
-                                    ft.Text(value="Fawaz Sammani1, Tanmoy Mukherjee1, Nikos Deligiannis1", color="#3a3a3a", size=14, font_family="Rhetorik", width=800),
-                                    ft.Text(value="Natural language explanation (NLE) models aim at explaining the decision-making process of a black box system via generating natural language sentences which are human-friendly, high-level and fine-grained. Current NLE models1 explain the decision-making process of a vision or vision-language model (a.k.a., task model), e.g., a VQA model, via a language model (a.k.a., explanation model), e.g., GPT. Other than the additional memory resources and inference time required by the task model, the task and explanation models are completely independent, which disassociates the explanation from the reasoning process made to predict the answer. We introduce NLX-GPT, a general, compact and faithful language model that can simultaneously predict an answer and explain it. We first conduct pre-training on large scale data of image-caption pairs for general understanding of images, and then formulate the answer as a text prediction task along with the explanation. Without region proposals nor a task model, our resulting overall framework attains better evaluation scores, contains much less parameters and is 15× faster than the current SoA model. We then address the problem of evaluating the explanations which can be in many times generic, data-biased and can come in several forms. We therefore design 2 new evaluation measures: (1) explain-predict and (2) retrieval-based attack, a selfevaluation framework that requires no labels. ",
-                                    color="#757575", size=14, font_family="Plain", width=800
-                                    ),
-                                    ft.TextButton("Learn more", icon=ft.icons.LINK_ROUNDED, icon_color="#2250c6", on_click=lambda _: page.launch_url('https://researchportal.vub.be/en/publications/nlx-gpt-a-model-for-natural-language-explanations-in-vision-and-v')),
-                                ]
-                            )
-                        ),
-                    ],
-                )
-            )
         if page.route == "/blank":
             page.views.append(
                 ft.View(
                     "/blank",
                     [
-                        ft.AppBar(
-                            toolbar_height= 100,
-                            leading=ft.Image(
-                                        src=f"/img/logo_w.png",
-                                        fit=ft.ImageFit.CONTAIN,
-                                    ),
-                            leading_width=200,
-                            center_title=False,
-                            bgcolor="#2250c6",
-                            actions=[
-                                ft.ElevatedButton("About FARI", on_click=about),
-                                ft.Text(value="     ", color="#2250c6", size=16, font_family="Plain"),
-                                ft.ElevatedButton("How does this AI works", on_click=how),
-                                ft.Text(value="     ", color="#2250c6", size=16, font_family="Plain"),
-                            ],
-                        ),
                         ft.Container(
                             margin=(150),
                             alignment=ft.alignment.center,
@@ -511,7 +349,7 @@ def main(page: ft.Page):
     #===============================================================================
     # MAIN CODE & GLOBAL VAR
     #===============================================================================    
-    page.title = "FARI - Visual question answering"
+    page.title = ""
     page.fonts = {
         "Plain": "/fonts/Plain-Regular.otf",
         "Rhetorik": "/fonts/RhetorikSerifTrial-Regular.ttf"
@@ -540,4 +378,4 @@ def main(page: ft.Page):
     
 
 
-ft.app(target=main, assets_dir="assets", view=ft.WEB_BROWSER)
+ft.app(target=main, port=8551, assets_dir="assets", view=ft.WEB_BROWSER)
