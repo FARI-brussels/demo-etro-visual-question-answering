@@ -349,7 +349,7 @@ def main(page: ft.Page):
     #===============================================================================
     # MAIN CODE & GLOBAL VAR
     #===============================================================================    
-    page.title = ""
+    page.title = "_"
     page.fonts = {
         "Plain": "/fonts/Plain-Regular.otf",
         "Rhetorik": "/fonts/RhetorikSerifTrial-Regular.ttf"
