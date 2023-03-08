@@ -17,17 +17,7 @@ decoded_image=""
 
 def main(page: ft.Page):
     global current_pic_path, imageviewer
-    
-    def about(e):
-        """Load the about page
-        """
-        page.go("/about")   
-
-    def how(e):
-        """Load the 'How does this AI works' page
-        """
-        page.go("/how")
-        
+            
     def query(payload, api_token):
         """Call the API
 
@@ -108,8 +98,10 @@ def main(page: ft.Page):
             data (string): Path of the selected image (URL or LOCAL)
         """
         global current_pic_path
-        current_pic_path = data
-        page.go("/ask")
+        if(data=='69'):
+            takePic(None)
+        else:
+            current_pic_path = data
     
     def items():
         """Add all the images on the home page
@@ -119,7 +111,7 @@ def main(page: ft.Page):
         """
         global imageviewer
         items = []
-        for i in range(0, 10):
+        for i in range(0, 9):
             shift = random.randint(0, 4)
             btn = ft.ElevatedButton(
                     content= 
@@ -151,6 +143,36 @@ def main(page: ft.Page):
                     on_click=lambda e: clickOnImage(e.control.data),
             )
             items.append(btn)
+        btn_webcam = ft.ElevatedButton(
+                    content= 
+                        ft.Image(
+                            src=f"/img/webcam.png",
+                            fit=ft.ImageFit.COVER,
+                            width=500,
+                            height=500,
+                            border_radius=ft.border_radius.all(20),
+                        ),
+                    style=
+                        ft.ButtonStyle(
+                            color={
+                                ft.MaterialState.HOVERED: ft.colors.WHITE,
+                                ft.MaterialState.FOCUSED: ft.colors.BLUE,
+                                ft.MaterialState.DEFAULT: ft.colors.BLACK,
+                            },
+                            bgcolor={ft.MaterialState.FOCUSED: ft.colors.WHITE, ft.MaterialState.DEFAULT: ft.colors.WHITE},
+                            padding={ft.MaterialState.DEFAULT: 0, ft.MaterialState.HOVERED: 20},
+                            overlay_color=ft.colors.TRANSPARENT,
+                            elevation={"pressed": 0, "": 1},
+                            animation_duration=500,
+                            shape={
+                                ft.MaterialState.HOVERED: RoundedRectangleBorder(radius=20),
+                                ft.MaterialState.DEFAULT: RoundedRectangleBorder(radius=20),
+                            },
+                        ),
+                    data = '69',
+                    on_click=lambda e: clickOnImage(e.control.data),
+            )
+        items.append(btn_webcam)
         return items 
             
     
@@ -199,6 +221,8 @@ def main(page: ft.Page):
         page.views.append(
             ft.View(
                 "/",
+                bgcolor="#ffffff",
+                controls=
                 [   
                     ft.Container(
                             margin=(50),
@@ -231,6 +255,8 @@ def main(page: ft.Page):
             page.views.append(
                 ft.View(
                     "/ask",
+                    bgcolor="#ffffff",
+                    controls=
                     [
                         ft.Row(
                             [
@@ -241,12 +267,6 @@ def main(page: ft.Page):
                                     on_click=lambda _: page.go("/")
                                 ),
                                 
-                                ft.TextButton(
-                                    text="Take a picture",
-                                    icon=ft.icons.CAMERA,
-                                    icon_color="#2250c6",
-                                    on_click=takePic
-                                ),
                             ]
                         ),
                         
@@ -275,6 +295,8 @@ def main(page: ft.Page):
             page.views.append(
                 ft.View(
                     "/result",
+                    bgcolor="#ffffff",
+                    controls=
                     [
                         ft.Row(
                             [
@@ -329,6 +351,8 @@ def main(page: ft.Page):
             page.views.append(
                 ft.View(
                     "/blank",
+                    bgcolor="#ffffff",
+                    controls=
                     [
                         ft.Container(
                             margin=(150),
