@@ -102,6 +102,8 @@ def main(page: ft.Page):
             takePic(None)
         else:
             current_pic_path = data
+            page.go("/ask")
+            page.update()
     
     def items():
         """Add all the images on the home page
