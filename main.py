@@ -4,6 +4,7 @@ from flet import RoundedRectangleBorder
 import requests
 import io
 import random
+import time
 
 import base64
 import cv2 as cv
@@ -17,6 +18,8 @@ decoded_image=""
 
 def main(page: ft.Page):
     global current_pic_path, imageviewer
+    
+    txt_timer = ft.Text(value="", color="#2250c6", size=35, font_family="Plain")
             
     def query(payload, api_token):
         """Call the API
@@ -99,6 +102,11 @@ def main(page: ft.Page):
         """
         global current_pic_path
         if(data=='69'):
+            for i in range(3, 0, -1):
+                txt_timer.value = "     Smile in " + str(i)
+                page.update()
+                time.sleep(1)
+            txt_timer.value = ""
             takePic(None)
         else:
             current_pic_path = data
@@ -146,14 +154,14 @@ def main(page: ft.Page):
             )
             items.append(btn)
         btn_webcam = ft.ElevatedButton(
-                    content= 
+                    content=
                         ft.Image(
                             src=f"/img/webcam.png",
                             fit=ft.ImageFit.COVER,
                             width=500,
                             height=500,
                             border_radius=ft.border_radius.all(20),
-                        ),
+                        ),  
                     style=
                         ft.ButtonStyle(
                             color={
@@ -235,8 +243,10 @@ def main(page: ft.Page):
                                     controls=[
                                         ft.Row(
                                             [
-                                                ft.Text(value="\nChoose one of these pictures\n", color="#8f8f8f", size=18, font_family="Plain")
-                                            ]
+                                                ft.Text(value="\nChoose one of these pictures\n", color="#8f8f8f", size=18, font_family="Plain"),
+                                                txt_timer,
+                                            ],
+                                            alignment=ft.MainAxisAlignment.SPACE_BETWEEN
                                         ),
                                         ft.Row(
                                             
